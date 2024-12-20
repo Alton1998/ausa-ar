@@ -1,5 +1,5 @@
 import sys
-
+# https://pub.dev/packages/ultralytics_yolo/example
 import cv2
 from sympy.printing.pretty.pretty_symbology import annotated
 from ultralytics import YOLO
@@ -26,7 +26,7 @@ relevant_idxs = {
     }
 }
 
-mode = "bp"
+mode = "ecg"
 
 
 # Open the webcam (0) or video file
@@ -54,8 +54,12 @@ try:
         for points_interest in relevant_idxs[mode].values():
             if confidence[points_interest] > 0.5:
                 x,y = normalized_coordinates[points_interest]
-                x = int(x * frame.shape[1])
-                y = int(y * frame.shape[0])
+                if points_interest == right_hip_idx:
+                    x = int((x+0.05) * frame.shape[1])
+                    y = int((y-0.3) * frame.shape[0])
+                else:
+                    x = int(x * frame.shape[1])
+                    y = int(y * frame.shape[0])
                 annotated_frame = cv2.circle(annotated_frame,(x,y),5,(255, 0, 0),10)
 
         # Display the annotated frame in a window
