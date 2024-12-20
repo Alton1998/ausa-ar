@@ -1,11 +1,24 @@
 import sys
 
 import cv2
+from sympy.printing.pretty.pretty_symbology import annotated
 from ultralytics import YOLO
 
 # Load the YOLO model
 model = YOLO("yolo11n-pose.pt")
+left_shoulder_idx = 5
+right_shoulder_idx = 6
+left_elbow_idx = 7
+right_elbow_idx = 8
+right_hip_idx = 12
 
+relevant_idxs = {
+    "left_shoulder_idx" : left_shoulder_idx,
+    "right_shoulder_idx": right_shoulder_idx,
+    "left_elbow_idx": left_elbow_idx,
+    "right_elbow_idx":right_elbow_idx,
+    "right_hip_idx": right_hip_idx
+}
 # Open the webcam (0) or video file
 cap = cv2.VideoCapture(0)
 
@@ -24,9 +37,16 @@ try:
 
         # Run YOLO tracking on the frame, persisting tracks between frames
         results = model.track(frame, persist=True)
+        confidence = results[0].keypoints.conf.detach().numpy()[0]
+        normalized_coordinates = results[0].keypoints.xyn.detach().numpy()[0]
 
-        # Visualize the results on the frame
-        annotated_frame = results[0].plot()
+        annotated_frame = frame
+        for points_interest in relevant_idxs.values():
+            if confidence[points_interest] > 0.5:
+                x,y = normalized_coordinates[points_interest]
+                x = int(x * frame.shape[1])
+                y = int(y * frame.shape[0])
+                annotated_frame = cv2.circle(annotated_frame,(x,y),5,(255, 0, 0),10)
 
         # Display the annotated frame in a window
         cv2.imshow("YOLO11 Tracking", annotated_frame)
