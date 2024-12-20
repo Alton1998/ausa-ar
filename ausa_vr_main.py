@@ -13,12 +13,22 @@ right_elbow_idx = 8
 right_hip_idx = 12
 
 relevant_idxs = {
-    "left_shoulder_idx" : left_shoulder_idx,
-    "right_shoulder_idx": right_shoulder_idx,
-    "left_elbow_idx": left_elbow_idx,
-    "right_elbow_idx":right_elbow_idx,
-    "right_hip_idx": right_hip_idx
+    "ecg": {
+        "left_shoulder_idx" : left_shoulder_idx,
+        "right_shoulder_idx": right_shoulder_idx,
+        "right_hip_idx": right_hip_idx
+    },
+    "bp":{
+        "left_shoulder_idx" : left_shoulder_idx,
+        "right_shoulder_idx": right_shoulder_idx,
+        "left_elbow_idx": left_elbow_idx,
+        "right_elbow_idx":right_elbow_idx,
+    }
 }
+
+mode = "bp"
+
+
 # Open the webcam (0) or video file
 cap = cv2.VideoCapture(0)
 
@@ -41,7 +51,7 @@ try:
         normalized_coordinates = results[0].keypoints.xyn.detach().numpy()[0]
 
         annotated_frame = frame
-        for points_interest in relevant_idxs.values():
+        for points_interest in relevant_idxs[mode].values():
             if confidence[points_interest] > 0.5:
                 x,y = normalized_coordinates[points_interest]
                 x = int(x * frame.shape[1])
