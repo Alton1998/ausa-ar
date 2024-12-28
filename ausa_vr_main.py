@@ -23,10 +23,18 @@ relevant_idxs = {
         "right_shoulder_idx": right_shoulder_idx,
         "left_elbow_idx": left_elbow_idx,
         "right_elbow_idx":right_elbow_idx,
+    },
+    "stethoscope": {
+        "left_shoulder_idx" : left_shoulder_idx,
+        "right_shoulder_idx": right_shoulder_idx,
+    },
+    "stethoscope_back": {
+        "left_shoulder_idx" : left_shoulder_idx,
+        "right_shoulder_idx": right_shoulder_idx,
     }
 }
 
-mode = "ecg"
+mode = "stethoscope_back"
 
 
 # Open the webcam (0) or video file
@@ -54,13 +62,67 @@ try:
         for points_interest in relevant_idxs[mode].values():
             if confidence[points_interest] > 0.5:
                 x,y = normalized_coordinates[points_interest]
-                if points_interest == right_hip_idx:
+                if points_interest == right_hip_idx and mode=="ecg":
                     x = int((x+0.05) * frame.shape[1])
                     y = int((y-0.3) * frame.shape[0])
+                    annotated_frame = cv2.circle(annotated_frame, (x, y), 5, (255, 0, 0), 10)
+                elif mode=="stethoscope" and points_interest == right_shoulder_idx:
+                    x1 = int((x + 0.1) * frame.shape[1])
+                    y1 = int((y) * frame.shape[0]) # P1
+                    x2 = int((x + 0.1) * frame.shape[1])
+                    y2 = int((y + 0.1) * frame.shape[0]) # P4
+                    x3 = int((x + 0.13) * frame.shape[1])
+                    y3 = int((y + 0.2) * frame.shape[0]) # P5
+                    x4 = int((x + 0.07) * frame.shape[1])
+                    y4 = int((y + 0.3) * frame.shape[0]) # P8
+                    annotated_frame = cv2.circle(annotated_frame, (x1, y1), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x2, y2), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x3, y3), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x4, y4), 2, (255, 0, 0), 5)
+                elif mode=="stethoscope" and points_interest == left_shoulder_idx:
+                    x1 = int((x - 0.1) * frame.shape[1])
+                    y1 = int(y * frame.shape[0])  # P2
+                    x2 = int((x - 0.1) * frame.shape[1])
+                    y2 = int((y + 0.1) * frame.shape[0])
+                    x3 = int((x - 0.13) * frame.shape[1])
+                    y3 = int((y + 0.2) * frame.shape[0])  # P5
+                    x4 = int((x - 0.07) * frame.shape[1])
+                    y4 = int((y + 0.3) * frame.shape[0])
+                    annotated_frame = cv2.circle(annotated_frame, (x1, y1), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x2, y2), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x3, y3), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x4, y4), 2, (255, 0, 0), 5)
+                elif mode=="stethoscope_back" and points_interest==right_shoulder_idx:
+                    x1 = int((x + 0.1) * frame.shape[1])
+                    y1 = int((y) * frame.shape[0])  # P1
+                    x2 = int((x + 0.1) * frame.shape[1])
+                    y2 = int((y + 0.1) * frame.shape[0])  # P4
+                    x3 = int((x + 0.1) * frame.shape[1])
+                    y3 = int((y + 0.2) * frame.shape[0])  # P5
+                    x4 = int((x + 0.05) * frame.shape[1])
+                    y4 = int((y+ 0.3 ) * frame.shape[0])  # P8
+                    annotated_frame = cv2.circle(annotated_frame, (x1, y1), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x2, y2), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x3, y3), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x4, y4), 2, (255, 0, 0), 5)
+                elif mode == "stethoscope_back" and points_interest == left_shoulder_idx:
+                    x1 = int((x - 0.1) * frame.shape[1])
+                    y1 = int((y) * frame.shape[0])  # P1
+                    x2 = int((x - 0.1) * frame.shape[1])
+                    y2 = int((y + 0.1) * frame.shape[0])  # P4
+                    x3 = int((x - 0.1) * frame.shape[1])
+                    y3 = int((y + 0.2) * frame.shape[0])  # P5
+                    x4 = int((x - 0.05) * frame.shape[1])
+                    y4 = int((y + 0.3) * frame.shape[0])  # P8
+                    annotated_frame = cv2.circle(annotated_frame, (x1, y1), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x2, y2), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x3, y3), 2, (255, 0, 0), 5)
+                    annotated_frame = cv2.circle(annotated_frame, (x4, y4), 2, (255, 0, 0), 5)
                 else:
                     x = int(x * frame.shape[1])
                     y = int(y * frame.shape[0])
-                annotated_frame = cv2.circle(annotated_frame,(x,y),5,(255, 0, 0),10)
+                    # annotated_frame = cv2.circle(annotated_frame, (x, y), 5, (255, 0, 0), 10)
+                # annotated_frame = cv2.circle(annotated_frame,(x,y),5,(255, 0, 0),10)
 
         # Display the annotated frame in a window
         cv2.imshow("YOLO11 Tracking", annotated_frame)
